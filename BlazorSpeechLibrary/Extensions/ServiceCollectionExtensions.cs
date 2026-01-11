@@ -10,9 +10,9 @@ public static class ServiceCollectionExtensions
     /// <summary>
     ///     Register BlazorSpeechExample services (browser-based by default)
     /// </summary>
-    public static IServiceCollection AddCleanSpeech(
+    public static IServiceCollection AddBlazorSpeech(
         this IServiceCollection services,
-        Action<CleanSpeechOptions>? configureOptions = null)
+        Action<BlazorSpeechOptions>? configureOptions = null)
     {
         services.AddTransient<ISpeechSynthesizer, BrowserSpeechSynthesizer>();
 

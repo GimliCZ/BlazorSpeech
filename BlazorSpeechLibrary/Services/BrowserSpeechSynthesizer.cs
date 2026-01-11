@@ -19,9 +19,9 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
     private IReadOnlyList<VoiceInfo>? _cachedVoices;
     private bool _disposed;
 
-    public BrowserSpeechSynthesizer(IJSRuntime jsRuntime, IOptions<CleanSpeechOptions>? options = null)
+    public BrowserSpeechSynthesizer(IJSRuntime jsRuntime, IOptions<BlazorSpeechOptions>? options = null)
     {
-        var opts = options?.Value ?? new CleanSpeechOptions();
+        var opts = options?.Value ?? new BlazorSpeechOptions();
 
         // Use custom path if provided, otherwise auto-detect
         var jsPath = opts.CustomJavaScriptPath

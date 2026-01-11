@@ -1,6 +1,6 @@
 namespace BlazorSpeech.Options;
 
-public sealed class CleanSpeechOptions
+public sealed class BlazorSpeechOptions
 {
     /// <summary>
     ///     Custom JavaScript module path. If null, auto-detects from assembly name.
@@ -11,5 +11,5 @@ public sealed class CleanSpeechOptions
     /// <summary>
     ///     JavaScript file name (default: cleanspeech.js)
     /// </summary>
-    public string JavaScriptFileName { get; set; } = "cleanspeech.js";
+    public string JavaScriptFileName { get; set; } = "cleanspeech.min.js";
 }
