@@ -3,15 +3,10 @@ using BlazorSpeech.DTOs;
 namespace BlazorSpeech.Models;
 
 /// <summary>
-/// Immutable voice metadata exposed to consumers
+///     Immutable voice metadata exposed to consumers
 /// </summary>
 public sealed record VoiceInfo
 {
-    public string Name { get; }
-    public string LanguageTag { get; }
-    public string VoiceUri { get; }
-    public bool IsDefault { get; }
-    public bool IsLocalService { get; }
     internal VoiceInfo(VoiceDto dto)
     {
         Name = dto.Name;
@@ -21,6 +16,14 @@ public sealed record VoiceInfo
         IsLocalService = dto.IsLocalService;
     }
 
+    public string Name { get; }
+    public string LanguageTag { get; }
+    public string VoiceUri { get; }
+    public bool IsDefault { get; }
+    public bool IsLocalService { get; }
+
     public override string ToString()
-        => $"{Name} [{LanguageTag}]{(IsDefault ? " (default)" : "")}";
+    {
+        return $"{Name} [{LanguageTag}]{(IsDefault ? " (default)" : "")}";
+    }
 }

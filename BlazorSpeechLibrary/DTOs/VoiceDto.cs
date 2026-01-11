@@ -6,4 +6,3 @@ public sealed record VoiceDto(
     string VoiceUri,
     bool IsDefault,
     bool IsLocalService);
-

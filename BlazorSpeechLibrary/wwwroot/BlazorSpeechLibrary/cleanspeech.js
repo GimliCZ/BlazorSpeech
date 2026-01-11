@@ -25,7 +25,7 @@ class SpeechController {
         const existing = this.synth.getVoices();
         if (existing && existing.length > 0) {
             this.voices = existing;
-            this.voiceReady = Promise.resolve(); 
+            this.voiceReady = Promise.resolve();
             return;
         }
 

@@ -3,12 +3,12 @@ using System.Reflection;
 namespace BlazorSpeech.Resolver;
 
 /// <summary>
-/// Diagnostic helper to verify JS path resolution
+///     Diagnostic helper to verify JS path resolution
 /// </summary>
 public static class PathResolver
 {
     /// <summary>
-    /// Get the resolved JavaScript path that will be used
+    ///     Get the resolved JavaScript path that will be used
     /// </summary>
     public static string GetJavaScriptPath()
     {
@@ -17,7 +17,7 @@ public static class PathResolver
     }
 
     /// <summary>
-    /// Get detailed assembly information for debugging
+    ///     Get detailed assembly information for debugging
     /// </summary>
     public static string GetAssemblyInfo()
     {

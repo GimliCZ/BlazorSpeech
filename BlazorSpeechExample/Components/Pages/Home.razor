@@ -1,9 +1,9 @@
 ﻿@page "/"
-@rendermode InteractiveServer
 @using System.Globalization
 @using BlazorSpeech.Interfaces
 @using BlazorSpeech.Models
 @using BlazorSpeech.Options
+@rendermode InteractiveServer
 @inject ISpeechSynthesizer Speech
 
 <PageTitle>BlazorSpeechExample Demo</PageTitle>
@@ -14,11 +14,11 @@
 
     <div class="card">
         <h2>Text to Speak</h2>
-        <textarea @bind="text" 
+        <textarea @bind="text"
                   @bind:after="OnTextChanged"
                   placeholder="Enter text to speak..."
                   rows="6"></textarea>
-        
+
         <div class="char-count">
             @text.Length / 5000 characters
         </div>
@@ -26,7 +26,7 @@
 
     <div class="card">
         <h2>Voice Settings</h2>
-        
+
         <div class="form-group">
             <label>Voice</label>
             @if (isLoadingVoices)
@@ -47,8 +47,8 @@
                     <option value="">Default System Voice</option>
 
                     @foreach (var group in voices
-                                  .GroupBy(v => v.LanguageTag)
-                                  .OrderBy(g => g.Key))
+                                      .GroupBy(v => v.LanguageTag)
+                                      .OrderBy(g => g.Key))
                     {
                         <optgroup label="@group.Key">
                             @foreach (var voice in group)
@@ -71,28 +71,29 @@
 
         <div class="form-group">
             <label>Rate: @rate.ToString("F1")</label>
-            <input type="range" min="0.1" max="2.0" step="0.1" 
-                   value="@rate" 
-                   @oninput="OnRateChanged" />
+            <input type="range" min="0.1" max="2.0" step="0.1"
+                   value="@rate"
+                   @oninput="OnRateChanged"/>
         </div>
 
         <div class="form-group">
             <label>Pitch: @pitch.ToString("F1")</label>
-            <input type="range" min="0.0" max="2.0" step="0.1" 
-                   value="@pitch" 
-                   @oninput="OnPitchChanged" />
+            <input type="range" min="0.0" max="2.0" step="0.1"
+                   value="@pitch"
+                   @oninput="OnPitchChanged"/>
         </div>
 
         <div class="form-group">
             <label>Volume: @volume.ToString("F1")</label>
-            <input type="range" min="0.0" max="1.0" step="0.1" 
-                   value="@volume" 
-                   @oninput="OnVolumeChanged" />
+            <input type="range" min="0.0" max="1.0" step="0.1"
+                   value="@volume"
+                   @oninput="OnVolumeChanged"/>
         </div>
     </div>
 
     <div class="actions">
-        <button class="btn btn-primary" @onclick="SpeakAsync" disabled="@(string.IsNullOrWhiteSpace(text) || isSpeaking)">
+        <button class="btn btn-primary" @onclick="SpeakAsync"
+                disabled="@(string.IsNullOrWhiteSpace(text) || isSpeaking)">
             @if (isSpeaking)
             {
                 <span>🔊 Speaking...</span>
@@ -102,7 +103,7 @@
                 <span>🔊 Speak</span>
             }
         </button>
-        
+
         <button class="btn btn-secondary" @onclick="StopAsync" disabled="@(!isSpeaking)">
             ⏹️ Stop
         </button>
@@ -141,16 +142,16 @@
 </div>
 
 @code {
-    private string text  { get; set; } = "Hello! This is BlazorSpeechExample - a production-grade speech synthesis library for Blazor.";
-    private string selectedVoice  { get; set; } = "";
-    private float rate  { get; set; } = 1.0f;
-    private float pitch  { get; set; } = 1.0f;
+    private string text { get; set; } = "Hello! This is BlazorSpeechExample - a production-grade speech synthesis library for Blazor.";
+    private string selectedVoice { get; set; } = "";
+    private float rate { get; set; } = 1.0f;
+    private float pitch { get; set; } = 1.0f;
     private float volume { get; set; } = 1.0f;
-    
-    private bool isSpeaking  { get; set; }
+
+    private bool isSpeaking { get; set; }
     private bool isLoadingVoices { get; set; }
     private string? errorMessage { get; set; }
-    private List<VoiceInfo> voices  { get; set; } = new();
+    private List<VoiceInfo> voices { get; } = new();
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -223,7 +224,7 @@
 
             // Small delay to let speech start
             await Task.Delay(100);
-            
+
             // Check if still speaking
             isSpeaking = await Speech.IsSpeakingAsync();
             StateHasChanged();
@@ -274,10 +275,10 @@
             StateHasChanged();
 
             voices.Clear();
-            
+
             // GetVoicesAsync now properly waits for browser voices to load
             var loadedVoices = await Speech.GetVoicesAsync();
-            
+
             if (loadedVoices.Count == 0)
             {
                 errorMessage = "No voices found. This may be a browser issue. Try refreshing the page.";
@@ -297,4 +298,5 @@
             StateHasChanged();
         }
     }
+
 }

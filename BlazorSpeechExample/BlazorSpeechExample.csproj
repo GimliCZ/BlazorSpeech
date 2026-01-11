@@ -9,6 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BlazorSpeechLibrary\BlazorSpeechLibrary.csproj" />
+        <PackageReference Include="BlazorSpeech" Version="1.0.1"/>
     </ItemGroup>
 </Project>

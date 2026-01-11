@@ -8,24 +8,25 @@ using Microsoft.JSInterop;
 namespace BlazorSpeech.Services;
 
 /// <summary>
-/// Browser-based speech synthesis - minimal JS interop, zero events crossing boundary
+///     Browser-based speech synthesis - minimal JS interop, zero events crossing boundary
 /// </summary>
 public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
 {
+    private static readonly string AssemblyName =
+        typeof(BrowserSpeechSynthesizer).Assembly.GetName().Name ?? "BlazorSpeechLibrary";
+
     private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
     private IReadOnlyList<VoiceInfo>? _cachedVoices;
     private bool _disposed;
-    private static readonly string AssemblyName = 
-        typeof(BrowserSpeechSynthesizer).Assembly.GetName().Name ?? "BlazorSpeechLibrary";
 
-    public BrowserSpeechSynthesizer(IJSRuntime jsRuntime,  IOptions<CleanSpeechOptions>? options = null)
+    public BrowserSpeechSynthesizer(IJSRuntime jsRuntime, IOptions<CleanSpeechOptions>? options = null)
     {
         var opts = options?.Value ?? new CleanSpeechOptions();
-        
+
         // Use custom path if provided, otherwise auto-detect
-        var jsPath = opts.CustomJavaScriptPath 
+        var jsPath = opts.CustomJavaScriptPath
                      ?? $"./_content/{AssemblyName}/BlazorSpeechLibrary/{opts.JavaScriptFileName}";
-        
+
         _moduleTask = new Lazy<Task<IJSObjectReference>>(() =>
             jsRuntime.InvokeAsync<IJSObjectReference>("import", jsPath).AsTask());
     }
@@ -33,17 +34,17 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
     public async ValueTask SpeakAsync(string text, SpeechOptions? options = null, CancellationToken ct = default)
     {
         ThrowIfDisposed();
-        
+
         if (string.IsNullOrWhiteSpace(text))
             return;
 
         options ??= SpeechOptions.Default;
-        
+
         // Sanitize input to prevent injection attacks
         var sanitized = SanitizeText(text);
-        
+
         var module = await _moduleTask.Value;
-        
+
         // Fire-and-forget - JS owns execution completely
         // No events, no callbacks, no sync context crossing
         await module.InvokeVoidAsync("speak", ct, new
@@ -60,7 +61,7 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
     public async ValueTask StopAsync(CancellationToken ct = default)
     {
         ThrowIfDisposed();
-        
+
         var module = await _moduleTask.Value;
         await module.InvokeVoidAsync("stop", ct);
     }
@@ -68,7 +69,7 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
     public async ValueTask<bool> IsSpeakingAsync(CancellationToken ct = default)
     {
         ThrowIfDisposed();
-        
+
         var module = await _moduleTask.Value;
         return await module.InvokeAsync<bool>("isSpeaking", ct);
     }
@@ -76,35 +77,28 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
     public async ValueTask<IReadOnlyList<VoiceInfo>> GetVoicesAsync(CancellationToken ct = default)
     {
         ThrowIfDisposed();
-        
+
         // Return cached voices if available
-        if (_cachedVoices is not null && _cachedVoices.Count > 0)
-        {
-            return _cachedVoices;
-        }
+        if (_cachedVoices is not null && _cachedVoices.Count > 0) return _cachedVoices;
 
         try
         {
             var module = await _moduleTask.Value;
-            
+
             // The JS getVoices() now properly waits for voices to load
             var voices = await module.InvokeAsync<VoiceDto[]?>("getVoices", ct);
-            
+
             if (voices != null && voices.Length > 0)
-            {
                 _cachedVoices = voices?
-                                    .Select(dto => new VoiceInfo(dto))
-                                    .OrderByDescending(v => v.IsDefault)
-                                    .ThenByDescending(v => v.IsLocalService)
-                                    .ThenBy(v => v.LanguageTag)
-                                    .ToList()
-                                    .AsReadOnly() ;
-            }
+                    .Select(dto => new VoiceInfo(dto))
+                    .OrderByDescending(v => v.IsDefault)
+                    .ThenByDescending(v => v.IsLocalService)
+                    .ThenBy(v => v.LanguageTag)
+                    .ToList()
+                    .AsReadOnly();
             else
-            {
                 // Return empty list if no voices available
                 _cachedVoices = Array.Empty<VoiceInfo>();
-            }
 
             return _cachedVoices!;
         }
@@ -114,6 +108,21 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
             Console.WriteLine($"CLEAN SPEECH LIBRARY: Error loading voices: {ex.Message}");
             _cachedVoices = Array.Empty<VoiceInfo>();
             return _cachedVoices;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+            return;
+
+        _disposed = true;
+
+        if (_moduleTask.IsValueCreated)
+        {
+            var module = await _moduleTask.Value;
+            await module.InvokeVoidAsync("dispose");
+            await module.DisposeAsync();
         }
     }
 
@@ -130,20 +139,5 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
     {
         if (_disposed)
             throw new ObjectDisposedException(nameof(BrowserSpeechSynthesizer));
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_disposed)
-            return;
-
-        _disposed = true;
-
-        if (_moduleTask.IsValueCreated)
-        {
-            var module = await _moduleTask.Value;
-            await module.InvokeVoidAsync("dispose");
-            await module.DisposeAsync();
-        }
     }
 }
