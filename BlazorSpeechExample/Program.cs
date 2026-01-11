@@ -1,5 +1,5 @@
+using BlazorSpeech.Extensions;
 using CleanSpeech.Components;
-using CleanSpeechLibrary.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

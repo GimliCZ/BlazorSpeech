@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace CleanSpeechLibrary.Resolver;
+namespace BlazorSpeech.Resolver;
 
 /// <summary>
 /// Diagnostic helper to verify JS path resolution

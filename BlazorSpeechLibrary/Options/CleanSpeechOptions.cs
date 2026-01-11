@@ -1,4 +1,4 @@
-namespace CleanSpeechLibrary.Options;
+namespace BlazorSpeech.Options;
 
 public sealed class CleanSpeechOptions
 {

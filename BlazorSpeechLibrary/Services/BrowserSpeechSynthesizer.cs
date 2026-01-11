@@ -1,11 +1,11 @@
-using CleanSpeechLibrary.DTOs;
-using CleanSpeechLibrary.Interfaces;
-using CleanSpeechLibrary.Models;
-using CleanSpeechLibrary.Options;
+using BlazorSpeech.DTOs;
+using BlazorSpeech.Interfaces;
+using BlazorSpeech.Models;
+using BlazorSpeech.Options;
 using Microsoft.Extensions.Options;
 using Microsoft.JSInterop;
 
-namespace CleanSpeechLibrary.Services;
+namespace BlazorSpeech.Services;
 
 /// <summary>
 /// Browser-based speech synthesis - minimal JS interop, zero events crossing boundary

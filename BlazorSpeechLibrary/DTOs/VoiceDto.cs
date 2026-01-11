@@ -1,4 +1,4 @@
-namespace CleanSpeechLibrary.DTOs;
+namespace BlazorSpeech.DTOs;
 
 public sealed record VoiceDto(
     string Name,

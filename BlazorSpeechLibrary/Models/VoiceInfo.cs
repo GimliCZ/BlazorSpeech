@@ -1,6 +1,6 @@
-using CleanSpeechLibrary.DTOs;
+using BlazorSpeech.DTOs;
 
-namespace CleanSpeechLibrary.Models;
+namespace BlazorSpeech.Models;
 
 /// <summary>
 /// Immutable voice metadata exposed to consumers

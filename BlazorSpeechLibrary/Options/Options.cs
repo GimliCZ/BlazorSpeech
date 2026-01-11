@@ -1,4 +1,4 @@
-namespace CleanSpeechLibrary.Options;
+namespace BlazorSpeech.Options;
 
 /// <summary>
 /// Speech configuration - immutable for thread safety

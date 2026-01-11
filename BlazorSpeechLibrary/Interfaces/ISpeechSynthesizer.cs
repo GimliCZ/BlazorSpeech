@@ -1,7 +1,7 @@
-using CleanSpeechLibrary.Models;
-using CleanSpeechLibrary.Options;
+using BlazorSpeech.Models;
+using BlazorSpeech.Options;
 
-namespace CleanSpeechLibrary.Interfaces;
+namespace BlazorSpeech.Interfaces;
 
 /// <summary>
 /// Core speech synthesis abstraction - minimal, performant, cancellable

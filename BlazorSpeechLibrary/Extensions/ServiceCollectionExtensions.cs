@@ -1,9 +1,9 @@
-using CleanSpeechLibrary.Interfaces;
-using CleanSpeechLibrary.Options;
-using CleanSpeechLibrary.Services;
+using BlazorSpeech.Interfaces;
+using BlazorSpeech.Options;
+using BlazorSpeech.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CleanSpeechLibrary.Extensions;
+namespace BlazorSpeech.Extensions;
 
 public static class ServiceCollectionExtensions
 {
