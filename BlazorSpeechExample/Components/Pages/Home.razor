@@ -1,0 +1,300 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using System.Globalization
+@using CleanSpeechLibrary.Interfaces
+@using CleanSpeechLibrary.Models
+@using CleanSpeechLibrary.Options
+@inject ISpeechSynthesizer Speech
+
+<PageTitle>BlazorSpeechExample Demo</PageTitle>
+
+<div class="speech-demo">
+    <h1>BlazorSpeechExample Demo</h1>
+    <p class="subtitle">Production-grade speech synthesis for Blazor Server</p>
+
+    <div class="card">
+        <h2>Text to Speak</h2>
+        <textarea @bind="text" 
+                  @bind:after="OnTextChanged"
+                  placeholder="Enter text to speak..."
+                  rows="6"></textarea>
+        
+        <div class="char-count">
+            @text.Length / 5000 characters
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Voice Settings</h2>
+        
+        <div class="form-group">
+            <label>Voice</label>
+            @if (isLoadingVoices)
+            {
+                <div class="loading-indicator">
+                    <span>⏳ Loading voices...</span>
+                </div>
+            }
+            else if (voices.Count == 0)
+            {
+                <div class="warning-indicator">
+                    <span>⚠️ No voices available. Click "Refresh Voices" to try again.</span>
+                </div>
+            }
+            else
+            {
+                <select @bind="selectedVoice">
+                    <option value="">Default System Voice</option>
+
+                    @foreach (var group in voices
+                                  .GroupBy(v => v.LanguageTag)
+                                  .OrderBy(g => g.Key))
+                    {
+                        <optgroup label="@group.Key">
+                            @foreach (var voice in group)
+                            {
+                                <option value="@voice.Name">
+                                    @voice.Name
+                                    @(voice.IsDefault ? " ⭐" : "")
+                                    @(voice.IsLocalService ? " (Local)" : " (Cloud)")
+                                </option>
+                            }
+                        </optgroup>
+                    }
+                </select>
+
+                <div class="voice-count">
+                    @voices.Count voices available
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <label>Rate: @rate.ToString("F1")</label>
+            <input type="range" min="0.1" max="2.0" step="0.1" 
+                   value="@rate" 
+                   @oninput="OnRateChanged" />
+        </div>
+
+        <div class="form-group">
+            <label>Pitch: @pitch.ToString("F1")</label>
+            <input type="range" min="0.0" max="2.0" step="0.1" 
+                   value="@pitch" 
+                   @oninput="OnPitchChanged" />
+        </div>
+
+        <div class="form-group">
+            <label>Volume: @volume.ToString("F1")</label>
+            <input type="range" min="0.0" max="1.0" step="0.1" 
+                   value="@volume" 
+                   @oninput="OnVolumeChanged" />
+        </div>
+    </div>
+
+    <div class="actions">
+        <button class="btn btn-primary" @onclick="SpeakAsync" disabled="@(string.IsNullOrWhiteSpace(text) || isSpeaking)">
+            @if (isSpeaking)
+            {
+                <span>🔊 Speaking...</span>
+            }
+            else
+            {
+                <span>🔊 Speak</span>
+            }
+        </button>
+        
+        <button class="btn btn-secondary" @onclick="StopAsync" disabled="@(!isSpeaking)">
+            ⏹️ Stop
+        </button>
+
+        <button class="btn btn-outline" @onclick="LoadVoicesAsync" disabled="@isLoadingVoices">
+            @if (isLoadingVoices)
+            {
+                <span>⏳ Loading...</span>
+            }
+            else
+            {
+                <span>🔄 Refresh Voices (@voices.Count)</span>
+            }
+        </button>
+    </div>
+
+    <div class="info-panel">
+        <h3>Features</h3>
+        <ul>
+            <li>✅ Zero events crossing JS/.NET boundary</li>
+            <li>✅ Fire-and-forget architecture</li>
+            <li>✅ Minimal CPU usage</li>
+            <li>✅ Thread-safe cancellation</li>
+            <li>✅ Voice caching with proper async loading</li>
+            <li>✅ Input sanitization</li>
+            <li>✅ No sync context storms</li>
+        </ul>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="alert alert-danger">
+            @errorMessage
+        </div>
+    }
+</div>
+
+@code {
+    private string text  { get; set; } = "Hello! This is BlazorSpeechExample - a production-grade speech synthesis library for Blazor.";
+    private string selectedVoice  { get; set; } = "";
+    private float rate  { get; set; } = 1.0f;
+    private float pitch  { get; set; } = 1.0f;
+    private float volume { get; set; } = 1.0f;
+    
+    private bool isSpeaking  { get; set; }
+    private bool isLoadingVoices { get; set; }
+    private string? errorMessage { get; set; }
+    private List<VoiceInfo> voices  { get; set; } = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Load voices after first render to ensure JS is initialized
+            await Task.Delay(100); // Small delay to ensure JS module is ready
+            await LoadVoicesAsync();
+        }
+    }
+
+    private void OnTextChanged()
+    {
+        StateHasChanged();
+    }
+
+    private void OnVoiceChanged()
+    {
+        StateHasChanged();
+    }
+
+    private void OnRateChanged(ChangeEventArgs e)
+    {
+        if (float.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+        {
+            rate = value;
+            StateHasChanged();
+        }
+    }
+
+    private void OnPitchChanged(ChangeEventArgs e)
+    {
+        if (float.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+        {
+            pitch = value;
+            StateHasChanged();
+        }
+    }
+
+    private void OnVolumeChanged(ChangeEventArgs e)
+    {
+        if (float.TryParse(e.Value?.ToString(), NumberStyles.Float, CultureInfo.InvariantCulture, out var value))
+        {
+            volume = value;
+            StateHasChanged();
+        }
+    }
+
+
+    private async Task SpeakAsync()
+    {
+        if (string.IsNullOrWhiteSpace(text))
+            return;
+
+        try
+        {
+            errorMessage = null;
+            isSpeaking = true;
+            StateHasChanged();
+
+            var options = new SpeechOptions
+            {
+                VoiceName = string.IsNullOrWhiteSpace(selectedVoice) ? null : selectedVoice,
+                Rate = rate,
+                Pitch = pitch,
+                Volume = volume
+            };
+
+            await Speech.SpeakAsync(text, options);
+
+            // Small delay to let speech start
+            await Task.Delay(100);
+            
+            // Check if still speaking
+            isSpeaking = await Speech.IsSpeakingAsync();
+            StateHasChanged();
+
+            // Poll until done
+            while (isSpeaking)
+            {
+                await Task.Delay(500);
+                isSpeaking = await Speech.IsSpeakingAsync();
+                StateHasChanged();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error: {ex.Message}";
+            isSpeaking = false;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task StopAsync()
+    {
+        try
+        {
+            errorMessage = null;
+            await Speech.StopAsync();
+            isSpeaking = false;
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error stopping speech: {ex.Message}";
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadVoicesAsync()
+    {
+        try
+        {
+            errorMessage = null;
+            isLoadingVoices = true;
+            StateHasChanged();
+
+            voices.Clear();
+            
+            // GetVoicesAsync now properly waits for browser voices to load
+            var loadedVoices = await Speech.GetVoicesAsync();
+            
+            if (loadedVoices.Count == 0)
+            {
+                errorMessage = "No voices found. This may be a browser issue. Try refreshing the page.";
+            }
+            else
+            {
+                voices.AddRange(loadedVoices);
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading voices: {ex.Message}";
+        }
+        finally
+        {
+            isLoadingVoices = false;
+            StateHasChanged();
+        }
+    }
+}

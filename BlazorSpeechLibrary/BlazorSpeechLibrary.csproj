@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <RootNamespace>BlazorSpeech</RootNamespace>
+        <AssemblyName>BlazorSpeech</AssemblyName>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <Title>Blazor Speech</Title>
+        <Authors>Gimli_CZ</Authors>
+        <Description>Small TTS Library which gives you ability to read text in Blazor</Description>
+        <Copyright>Copyright (c) Gimli_CZ 2026</Copyright>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <Version>1.0.0</Version>
+        <RepositoryType>git</RepositoryType>
+        <LangVersion>14</LangVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Include="wwwroot\**\*" Pack="true" PackagePath="wwwroot\" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="../README.md" Pack="true" PackagePath=".">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+    
+    <ItemGroup>
+        <Content Update="wwwroot\**\*">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
+</Project>
