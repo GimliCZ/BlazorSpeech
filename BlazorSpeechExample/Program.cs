@@ -17,7 +17,7 @@ builder.Services.AddSignalR(options => { options.EnableDetailedErrors = true; })
 
 
 // Register BlazorSpeechExample - clean, minimal, performant
-builder.Services.AddCleanSpeech();
+builder.Services.AddBlazorSpeech();
 
 var app = builder.Build();
 

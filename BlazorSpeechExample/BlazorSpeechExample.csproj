@@ -9,6 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="BlazorSpeech" Version="1.0.1"/>
+        <PackageReference Include="BlazorSpeech" Version="1.0.2" />
     </ItemGroup>
 </Project>
