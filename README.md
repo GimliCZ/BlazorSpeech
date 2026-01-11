@@ -35,7 +35,7 @@ dotnet add package BlazorSpeech
 ## Quick Start
 ### Register
 ```cs
-builder.Services.AddCleanSpeech();
+builder.Services.AddBlazorSpeech();
 ```
 ### Inject to page
 ```cs
