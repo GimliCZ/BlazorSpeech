@@ -9,6 +9,10 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <Title>Blazor Speech</Title>
         <Authors>Gimli_CZ</Authors>
+        <Copyright>Copyright (c) Gimli_CZ 2025</Copyright>
+        <PackageProjectUrl>hhttps://github.com/GimliCZ/BlazorSpeech/</PackageProjectUrl>
+        <License>hhttps://github.com/GimliCZ/BlazorSpeech/blob/master/LICENSE</License>
+        <RepositoryUrl>hhttps://github.com/GimliCZ/BlazorSpeech/</RepositoryUrl>
         <Description>Small TTS Library which gives you ability to read text in Blazor</Description>
         <Copyright>Copyright (c) Gimli_CZ 2026</Copyright>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
@@ -21,21 +25,21 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.1" />
     </ItemGroup>
-    
-    <ItemGroup>
-        <Content Include="wwwroot\**\*" Pack="true" PackagePath="wwwroot\" />
-    </ItemGroup>
+
+    <PropertyGroup>
+        <EnableDefaultContentItems>false</EnableDefaultContentItems>
+    </PropertyGroup>
 
     <ItemGroup>
-        <Content Include="../README.md" Pack="true" PackagePath=".">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <Content Include="wwwroot\**\*">
+            <Pack>true</Pack>
+            <PackagePath>wwwroot\</PackagePath>
         </Content>
-    </ItemGroup>
-    
-    <ItemGroup>
-        <Content Update="wwwroot\**\*">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </Content>
+        <None Include="..\README.md">
+            <Pack>true</Pack>
+            <PackagePath>.</PackagePath>
+            <Visible>true</Visible>
+        </None>
     </ItemGroup>
 
 </Project>
