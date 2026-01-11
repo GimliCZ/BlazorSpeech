@@ -10,9 +10,9 @@
         <Title>Blazor Speech</Title>
         <Authors>Gimli_CZ</Authors>
         <Copyright>Copyright (c) Gimli_CZ 2025</Copyright>
-        <PackageProjectUrl>hhttps://github.com/GimliCZ/BlazorSpeech/</PackageProjectUrl>
-        <License>hhttps://github.com/GimliCZ/BlazorSpeech/blob/master/LICENSE</License>
-        <RepositoryUrl>hhttps://github.com/GimliCZ/BlazorSpeech/</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/GimliCZ/BlazorSpeech/</PackageProjectUrl>
+        <License>https://github.com/GimliCZ/BlazorSpeech/blob/master/LICENSE</License>
+        <RepositoryUrl>https://github.com/GimliCZ/BlazorSpeech/</RepositoryUrl>
         <Description>Small TTS Library which gives you ability to read text in Blazor</Description>
         <Copyright>Copyright (c) Gimli_CZ 2026</Copyright>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
