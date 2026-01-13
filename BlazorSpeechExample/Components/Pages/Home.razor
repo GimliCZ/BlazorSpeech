@@ -5,6 +5,7 @@
 @using BlazorSpeech.Options
 @rendermode InteractiveServer
 @inject ISpeechSynthesizer Speech
+@implements IAsyncDisposable
 
 <PageTitle>BlazorSpeechExample Demo</PageTitle>
 
@@ -152,15 +153,24 @@
     private bool isLoadingVoices { get; set; }
     private string? errorMessage { get; set; }
     private List<VoiceInfo> voices { get; } = new();
+    
+    private async Task OnSpeakingStateChanged(bool speaking)
+    {
+        isSpeaking = speaking;
+
+        // Ensure UI update happens on the correct sync context
+        await InvokeAsync(StateHasChanged);
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            // Load voices after first render to ensure JS is initialized
-            await Task.Delay(100); // Small delay to ensure JS module is ready
             await LoadVoicesAsync();
+            Speech.SpeakingStateChanged += OnSpeakingStateChanged;
+            isSpeaking = await Speech.IsSpeakingOrPendingSpeechAsync();
         }
+        await base.OnAfterRenderAsync(firstRender);
     }
 
     private void OnTextChanged()
@@ -226,16 +236,8 @@
             await Task.Delay(100);
 
             // Check if still speaking
-            isSpeaking = await Speech.IsSpeakingAsync();
+            isSpeaking = await Speech.IsSpeakingOrPendingSpeechAsync();
             StateHasChanged();
-
-            // Poll until done
-            while (isSpeaking)
-            {
-                await Task.Delay(500);
-                isSpeaking = await Speech.IsSpeakingAsync();
-                StateHasChanged();
-            }
         }
         catch (Exception ex)
         {
@@ -253,7 +255,7 @@
         try
         {
             errorMessage = null;
-            await Speech.StopAsync();
+            await Speech.CancelAsync();
             isSpeaking = false;
         }
         catch (Exception ex)
@@ -298,5 +300,9 @@
             StateHasChanged();
         }
     }
-
+    public ValueTask DisposeAsync()
+    {
+        Speech.SpeakingStateChanged -= OnSpeakingStateChanged;
+        return ValueTask.CompletedTask;
+    }
 }
