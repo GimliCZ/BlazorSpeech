@@ -43,17 +43,13 @@ builder.Services.AddBlazorSpeech();
 ```
 ### Speak
 ```cs
- private async Task SpeakAsync()
+  private async Task SpeakAsync()
     {
         if (string.IsNullOrWhiteSpace(text))
             return;
 
         try
         {
-            errorMessage = null;
-            isSpeaking = true;
-            StateHasChanged();
-
             var options = new SpeechOptions
             {
                 VoiceName = string.IsNullOrWhiteSpace(selectedVoice) ? null : selectedVoice,
@@ -63,31 +59,63 @@ builder.Services.AddBlazorSpeech();
             };
 
             await Speech.SpeakAsync(text, options);
-
-            // Small delay to let speech start
-            await Task.Delay(100);
-
-            // Check if still speaking
-            isSpeaking = await Speech.IsSpeakingAsync();
-            StateHasChanged();
-
-            // Poll until done
-            while (isSpeaking)
-            {
-                await Task.Delay(500);
-                isSpeaking = await Speech.IsSpeakingAsync();
-                StateHasChanged();
-            }
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error: {ex.Message}";
-            isSpeaking = false;
+            Console.WriteLine("Error {0}", ex.Message);
         }
         finally
         {
             StateHasChanged();
         }
+    }
+```
+### Subscribe on Speech Changes
+```cs
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadVoicesAsync();
+            Speech.SpeakingStateChanged += OnSpeakingStateChanged;
+            isSpeaking = await Speech.IsSpeakingOrPendingSpeechAsync();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+```
+### React to change of voice state
+```cs
+    private async Task OnSpeakingStateChanged(bool speaking)
+    {
+        isSpeaking = speaking;
+
+        // Ensure UI update happens
+        await InvokeAsync(StateHasChanged);
+    }
+```
+### Stop Speaking
+```cs
+ private async Task StopAsync()
+    {
+        try
+        {
+            await Speech.CancelAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Error {0}", ex.Message);
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+```
+### Cleanup after use
+```cs
+    public void Dispose()
+    {
+        Speech.SpeakingStateChanged -= OnSpeakingStateChanged;
     }
 ```
 
