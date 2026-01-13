@@ -5,7 +5,7 @@
 @using BlazorSpeech.Options
 @rendermode InteractiveServer
 @inject ISpeechSynthesizer Speech
-@implements IAsyncDisposable
+@implements IDisposable
 
 <PageTitle>BlazorSpeechExample Demo</PageTitle>
 
@@ -218,10 +218,6 @@
 
         try
         {
-            errorMessage = null;
-            isSpeaking = true;
-            StateHasChanged();
-
             var options = new SpeechOptions
             {
                 VoiceName = string.IsNullOrWhiteSpace(selectedVoice) ? null : selectedVoice,
@@ -231,18 +227,10 @@
             };
 
             await Speech.SpeakAsync(text, options);
-
-            // Small delay to let speech start
-            await Task.Delay(100);
-
-            // Check if still speaking
-            isSpeaking = await Speech.IsSpeakingOrPendingSpeechAsync();
-            StateHasChanged();
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error: {ex.Message}";
-            isSpeaking = false;
+            Console.WriteLine("Error {0}", ex.Message);
         }
         finally
         {
@@ -254,13 +242,11 @@
     {
         try
         {
-            errorMessage = null;
             await Speech.CancelAsync();
-            isSpeaking = false;
         }
         catch (Exception ex)
         {
-            errorMessage = $"Error stopping speech: {ex.Message}";
+            Console.WriteLine("Error {0}", ex.Message);
         }
         finally
         {
@@ -300,9 +286,8 @@
             StateHasChanged();
         }
     }
-    public ValueTask DisposeAsync()
+    public void Dispose()
     {
         Speech.SpeakingStateChanged -= OnSpeakingStateChanged;
-        return ValueTask.CompletedTask;
     }
 }
