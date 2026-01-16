@@ -223,7 +223,8 @@
                 VoiceName = string.IsNullOrWhiteSpace(selectedVoice) ? null : selectedVoice,
                 Rate = rate,
                 Pitch = pitch,
-                Volume = volume
+                Volume = volume,
+                Queue = false
             };
 
             await Speech.SpeakAsync(text, options);
