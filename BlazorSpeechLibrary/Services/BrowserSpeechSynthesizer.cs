@@ -81,7 +81,8 @@ public sealed class BrowserSpeechSynthesizer : ISpeechSynthesizer
             rate = Math.Clamp(options.Rate, 0.1f, 10.0f),
             pitch = Math.Clamp(options.Pitch, 0.0f, 2.0f),
             volume = Math.Clamp(options.Volume, 0.0f, 1.0f),
-            lang = options.Language
+            lang = options.Language,
+            queue =  options.Queue,
         });
     }
 

@@ -74,16 +74,28 @@ class SpeechController {
         if (this.voiceReady)
             await this.voiceReady;
     }
-
+    /**
+     * Speak text with options
+     * @param {Object} opts - Speech options
+     * @param {string} opts.text - Text to speak
+     * @param {string} [opts.lang] - Language code
+     * @param {number} [opts.rate] - Speech rate (0.1-10)
+     * @param {number} [opts.pitch] - Speech pitch (0-2)
+     * @param {number} [opts.volume] - Speech volume (0-1)
+     * @param {string} [opts.voice] - Voice name
+     * @param {boolean} [opts.queue=false] - If true, add to native queue; if false, cancel previous
+     */
     speak(opts) {
         this._throwIfDisposed();
 
         if (!opts || !opts.text)
             return;
 
-        // Cancel previous utterances – deterministic behavior
-        this.synth.cancel();
-        this._cleanupCurrentUtterance();
+        // If NOT queuing, cancel previous utterances
+        if (!opts.queue) {
+            this.synth.cancel();
+            this._cleanupCurrentUtterance();
+        }
 
         const u = new SpeechSynthesisUtterance(opts.text);
 

@@ -31,4 +31,9 @@ public sealed record SpeechOptions
     ///     Language/locale (BCP 47 tag, e.g. "en-US")
     /// </summary>
     public string? Language { get; init; }
+
+    /// <summary>
+    ///     Enables Queue texts
+    /// </summary>
+    public bool Queue { get; init; } = false;
 }
