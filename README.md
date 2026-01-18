@@ -18,6 +18,9 @@ provides simple JavaScript interop for working with browser `SpeechSynthesis` AP
 
 ---
 
+<img width="358" height="861" alt="image" src="https://github.com/user-attachments/assets/bb787c02-5c53-4a10-9a6f-99531929fb3a" />
+
+
 ## Features
 
 - Automatic detection of available speech voices
@@ -55,7 +58,8 @@ builder.Services.AddBlazorSpeech();
                 VoiceName = string.IsNullOrWhiteSpace(selectedVoice) ? null : selectedVoice,
                 Rate = rate,
                 Pitch = pitch,
-                Volume = volume
+                Volume = volume,
+                Queue = false
             };
 
             await Speech.SpeakAsync(text, options);
