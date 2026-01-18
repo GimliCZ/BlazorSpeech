@@ -122,4 +122,6 @@ builder.Services.AddBlazorSpeech();
         Speech.SpeakingStateChanged -= OnSpeakingStateChanged;
     }
 ```
+### Warning
+For Firefox users its recommended to increase message size of RSignal to 2MB
 
